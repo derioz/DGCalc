@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damon's Glizzy's — Order Calculator</title>
+    <meta name="description" content="Employee order calculator for Damon's Glizzy's menu. Quickly calculate totals for all menu items.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌭</text></svg>">
+</head>
+<body>
+    <div class="app">
+        <!-- Floating background orbs -->
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+
+        <!-- Header -->
+        <header class="header" id="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">🌭</div>
+                    <div class="logo-text">
+                        <h1>Damon's Glizzy's</h1>
+                        <span class="logo-subtitle">Order Calculator</span>
+                    </div>
+                </div>
+                <button class="clear-btn" id="clear-all-btn" title="Clear all items">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    </svg>
+                    Clear All
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Menu Categories -->
+            <section class="menu-section" id="menu-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon">🍽️</span>
+                        Food Items
+                    </h2>
+                </div>
+                <div class="menu-grid" id="food-grid">
+                    <!-- Food items will be injected by JS -->
+                </div>
+            </section>
+
+            <section class="menu-section" id="drinks-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-icon">🥤</span>
+                        Drinks
+                    </h2>
+                </div>
+                <div class="menu-grid" id="drinks-grid">
+                    <!-- Drink items will be injected by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Sticky Order Total -->
+        <footer class="order-footer" id="order-footer">
+            <div class="order-footer-content">
+                <div class="order-summary">
+                    <div class="order-items-count">
+                        <span id="total-items">0</span> items
+                    </div>
+                    <div class="order-total">
+                        <span class="total-label">Total</span>
+                        <span class="total-amount" id="total-amount">$0</span>
+                    </div>
+                </div>
+                <div class="order-breakdown" id="order-breakdown">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
