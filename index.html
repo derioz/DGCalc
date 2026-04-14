@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Damon's Glizzy's — Order Calculator</title>
     <meta name="description" content="Employee order calculator for Damon's Glizzy's menu. Quickly calculate totals for all menu items.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,35 +12,76 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌭</text></svg>">
 </head>
 <body>
-    <div class="app">
+    <div class="app" id="app">
         <!-- Floating background orbs -->
         <div class="bg-orb bg-orb-1"></div>
         <div class="bg-orb bg-orb-2"></div>
         <div class="bg-orb bg-orb-3"></div>
 
+        <!-- Particle canvas -->
+        <canvas class="particle-canvas" id="particle-canvas"></canvas>
+
+        <!-- Confetti container -->
+        <div class="confetti-container" id="confetti-container"></div>
+
         <!-- Header -->
         <header class="header" id="header">
             <div class="header-content">
                 <div class="logo-section">
-                    <div class="logo-icon">🌭</div>
+                    <img 
+                        src="https://r2.fivemanage.com/image/mtqUgFQCWqlh.png" 
+                        alt="Damon's Glizzy's Logo" 
+                        class="logo-img"
+                        id="logo-img"
+                    >
                     <div class="logo-text">
                         <h1>Damon's Glizzy's</h1>
                         <span class="logo-subtitle">Order Calculator</span>
                     </div>
                 </div>
-                <button class="clear-btn" id="clear-all-btn" title="Clear all items">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 6h18"></path>
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    </svg>
-                    Clear All
-                </button>
+                <div class="header-actions">
+                    <button class="icon-btn sound-toggle" id="sound-toggle" title="Toggle sounds">
+                        <svg class="sound-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                        <svg class="sound-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                    </button>
+                    <button class="clear-btn" id="clear-all-btn" title="Clear all items (Esc)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        </svg>
+                        <span class="clear-btn-text">Clear All</span>
+                    </button>
+                </div>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Quick Stats Bar -->
+            <div class="stats-bar" id="stats-bar">
+                <div class="stat-pill">
+                    <span class="stat-label">Items</span>
+                    <span class="stat-value" id="stat-items">0</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-label">Unique</span>
+                    <span class="stat-value" id="stat-unique">0</span>
+                </div>
+                <div class="stat-pill accent">
+                    <span class="stat-label">Total</span>
+                    <span class="stat-value" id="stat-total">$0</span>
+                </div>
+            </div>
+
             <!-- Menu Categories -->
             <section class="menu-section" id="menu-section">
                 <div class="section-header">
@@ -48,6 +89,7 @@
                         <span class="section-icon">🍽️</span>
                         Food Items
                     </h2>
+                    <span class="section-count" id="food-count">0 selected</span>
                 </div>
                 <div class="menu-grid" id="food-grid">
                     <!-- Food items will be injected by JS -->
@@ -60,6 +102,7 @@
                         <span class="section-icon">🥤</span>
                         Drinks
                     </h2>
+                    <span class="section-count" id="drinks-count">0 selected</span>
                 </div>
                 <div class="menu-grid" id="drinks-grid">
                     <!-- Drink items will be injected by JS -->
@@ -71,8 +114,19 @@
         <footer class="order-footer" id="order-footer">
             <div class="order-footer-content">
                 <div class="order-summary">
-                    <div class="order-items-count">
-                        <span id="total-items">0</span> items
+                    <div class="order-left">
+                        <div class="order-items-count">
+                            <span id="total-items">0</span> items
+                        </div>
+                        <button class="receipt-btn" id="receipt-btn" title="View receipt">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            Receipt
+                        </button>
                     </div>
                     <div class="order-total">
                         <span class="total-label">Total</span>
@@ -84,6 +138,43 @@
                 </div>
             </div>
         </footer>
+
+        <!-- Receipt Modal -->
+        <div class="modal-overlay" id="receipt-modal">
+            <div class="modal" role="dialog" aria-labelledby="modal-title">
+                <div class="modal-header">
+                    <div class="modal-title-section">
+                        <img src="https://r2.fivemanage.com/image/mtqUgFQCWqlh.png" alt="" class="modal-logo">
+                        <div>
+                            <h3 id="modal-title">Order Receipt</h3>
+                            <span class="modal-order-num" id="modal-order-num">#0000</span>
+                        </div>
+                    </div>
+                    <button class="modal-close" id="modal-close" title="Close">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Receipt contents injected by JS -->
+                </div>
+                <div class="modal-footer">
+                    <div class="modal-total">
+                        <span>Grand Total</span>
+                        <span class="modal-total-amount" id="modal-total-amount">$0</span>
+                    </div>
+                    <button class="new-order-btn" id="new-order-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        New Order
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
