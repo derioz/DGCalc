@@ -121,6 +121,30 @@ const MENU_ITEMS = {
             emoji: '💧',
             description: '3 drinks of your choice',
             tag: '3 Drinks'
+        },
+        {
+            id: 'family-pack',
+            name: 'Family Pack',
+            price: 5000,
+            emoji: '👨‍👩‍👧‍👦',
+            description: '5 food items + 5 drinks',
+            tag: '5 Food + 5 Drinks'
+        },
+        {
+            id: 'the-squad',
+            name: 'The Squad',
+            price: 8000,
+            emoji: '🔥',
+            description: '8 food items + 8 drinks',
+            tag: '8 Food + 8 Drinks'
+        },
+        {
+            id: 'the-block-party',
+            name: 'The Block Party',
+            price: 10000,
+            emoji: '🎊',
+            description: '10 food items + 10 drinks',
+            tag: '10 Food + 10 Drinks'
         }
     ]
 };
@@ -288,25 +312,25 @@ function renderMenuItems() {
     const drinksGrid = document.getElementById('drinks-grid');
     const combosGrid = document.getElementById('combos-grid');
 
+    MENU_ITEMS.combos.forEach((item, index) => {
+        const card = createMenuCard(item, true);
+        card.style.animation = `section-fade-in 0.4s ease-out both`;
+        card.style.animationDelay = `${index * 0.06 + 0.10}s`;
+        combosGrid.appendChild(card);
+    });
+
     MENU_ITEMS.food.forEach((item, index) => {
         const card = createMenuCard(item);
         card.style.animation = `section-fade-in 0.4s ease-out both`;
-        card.style.animationDelay = `${index * 0.06 + 0.15}s`;
+        card.style.animationDelay = `${index * 0.06 + 0.25}s`;
         foodGrid.appendChild(card);
     });
 
     MENU_ITEMS.drinks.forEach((item, index) => {
         const card = createMenuCard(item);
         card.style.animation = `section-fade-in 0.4s ease-out both`;
-        card.style.animationDelay = `${index * 0.06 + 0.35}s`;
+        card.style.animationDelay = `${index * 0.06 + 0.40}s`;
         drinksGrid.appendChild(card);
-    });
-
-    MENU_ITEMS.combos.forEach((item, index) => {
-        const card = createMenuCard(item, true);
-        card.style.animation = `section-fade-in 0.4s ease-out both`;
-        card.style.animationDelay = `${index * 0.06 + 0.55}s`;
-        combosGrid.appendChild(card);
     });
 }
 
