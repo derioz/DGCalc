@@ -401,6 +401,44 @@ body {
     }
 }
 
+/* ---------- Combo Card Styles ---------- */
+.combo-card {
+    border-color: rgba(168, 85, 247, 0.2);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.06) 0%, rgba(255, 200, 55, 0.03) 100%);
+}
+
+.combo-card:hover {
+    border-color: rgba(168, 85, 247, 0.35);
+    box-shadow: 0 4px 24px rgba(168, 85, 247, 0.15), var(--shadow-md);
+}
+
+.combo-card.active {
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+}
+
+.combo-tag {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    padding: 2px 8px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #e2c4ff;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.35) 0%, rgba(139, 92, 246, 0.25) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: var(--radius-full);
+    z-index: 2;
+    white-space: nowrap;
+}
+
+.menu-section:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+
 .section-header {
     margin-bottom: var(--space-md);
     display: flex;
@@ -1401,4 +1439,128 @@ body {
 
 button:focus:not(:focus-visible) {
     outline: none;
+}
+
+/* ---------- Credit Pill ---------- */
+.credit-pill {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: rgba(22, 22, 26, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+}
+
+.credit-pill:hover {
+    color: var(--text-secondary);
+    border-color: var(--border-hover);
+    background: rgba(30, 30, 36, 0.92);
+    box-shadow: 0 0 20px rgba(255, 200, 55, 0.08);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.credit-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    transition: transform var(--transition-spring);
+    border: 1px solid var(--border-subtle);
+}
+
+.credit-pill:hover .credit-avatar {
+    transform: rotate(-15deg) scale(1.15);
+    border-color: var(--border-hover);
+}
+
+/* Easter egg activated state */
+.credit-pill.easter-egg-active {
+    border-color: transparent;
+    background: linear-gradient(135deg, 
+        rgba(255, 200, 55, 0.2) 0%, 
+        rgba(255, 71, 87, 0.2) 25%,
+        rgba(139, 92, 246, 0.2) 50%,
+        rgba(46, 213, 115, 0.2) 75%,
+        rgba(255, 200, 55, 0.2) 100%
+    );
+    background-size: 300% 300%;
+    animation: credit-rainbow 3s ease infinite;
+    box-shadow: 
+        0 0 20px rgba(255, 200, 55, 0.15),
+        0 0 40px rgba(139, 92, 246, 0.1);
+    color: var(--text-primary);
+    transform: translateX(-50%);
+}
+
+.credit-pill.easter-egg-active .credit-avatar {
+    animation: credit-spin 1s ease-in-out infinite;
+    border-color: var(--accent);
+}
+
+@keyframes credit-rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes credit-spin {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(15deg) scale(1.3); }
+    50% { transform: rotate(0deg) scale(1); }
+    75% { transform: rotate(-15deg) scale(1.3); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+/* Hot dog rain overlay */
+.hotdog-rain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    overflow: hidden;
+}
+
+.hotdog-rain-piece {
+    position: absolute;
+    top: -60px;
+    font-size: 2rem;
+    animation: hotdog-fall linear forwards;
+    pointer-events: none;
+}
+
+@keyframes hotdog-fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(540deg);
+        opacity: 0;
+    }
+}
+
+/* Hide credit pill when footer overlaps */
+.order-footer.visible ~ .credit-pill {
+    opacity: 0;
+    pointer-events: none;
 }

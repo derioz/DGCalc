@@ -35,6 +35,13 @@ const MENU_ITEMS = {
             price: 500,
             emoji: '🍵',
             description: 'Corn dog in a cup of soup'
+        },
+        {
+            id: 'ketchup-chips',
+            name: 'Ketchup Chips',
+            price: 500,
+            emoji: '🍟',
+            description: 'Crispy ketchup-flavored chips'
         }
     ],
     drinks: [
@@ -72,6 +79,48 @@ const MENU_ITEMS = {
             price: 500,
             emoji: '🍧',
             description: 'Pink fizzy drink'
+        }
+    ],
+    combos: [
+        {
+            id: 'the-double-date',
+            name: 'The Double Date',
+            price: 2000,
+            emoji: '💕',
+            description: '2 food items + 2 drinks of your choice',
+            tag: '2 Food + 2 Drinks'
+        },
+        {
+            id: 'the-glizzy-feast',
+            name: 'The Glizzy Feast',
+            price: 2500,
+            emoji: '👑',
+            description: 'All 5 food items in one order',
+            tag: 'All 5 Foods'
+        },
+        {
+            id: 'the-full-send',
+            name: 'The Full Send',
+            price: 4500,
+            emoji: '🚀',
+            description: '1 of every single menu item',
+            tag: 'Everything'
+        },
+        {
+            id: 'snack-pack',
+            name: 'Snack Pack',
+            price: 1500,
+            emoji: '🎒',
+            description: '2 food items + 1 drink',
+            tag: '2 Food + 1 Drink'
+        },
+        {
+            id: 'thirst-trap',
+            name: 'Thirst Trap',
+            price: 1400,
+            emoji: '💧',
+            description: '3 drinks of your choice',
+            tag: '3 Drinks'
         }
     ]
 };
@@ -184,14 +233,17 @@ function formatPrice(cents) {
     return '$' + cents.toLocaleString();
 }
 
-function createMenuCard(item) {
+function createMenuCard(item, isCombo = false) {
     const card = document.createElement('div');
-    card.className = 'menu-card';
+    card.className = isCombo ? 'menu-card combo-card' : 'menu-card';
     card.id = `card-${item.id}`;
     card.dataset.itemId = item.id;
 
+    const tagHtml = item.tag ? `<div class="combo-tag">${item.tag}</div>` : '';
+
     card.innerHTML = `
         <div class="active-badge"></div>
+        ${tagHtml}
         <div class="card-top">
             <div class="card-info">
                 <div class="card-name">${item.name}</div>
@@ -234,6 +286,7 @@ function createMenuCard(item) {
 function renderMenuItems() {
     const foodGrid = document.getElementById('food-grid');
     const drinksGrid = document.getElementById('drinks-grid');
+    const combosGrid = document.getElementById('combos-grid');
 
     MENU_ITEMS.food.forEach((item, index) => {
         const card = createMenuCard(item);
@@ -247,6 +300,13 @@ function renderMenuItems() {
         card.style.animation = `section-fade-in 0.4s ease-out both`;
         card.style.animationDelay = `${index * 0.06 + 0.35}s`;
         drinksGrid.appendChild(card);
+    });
+
+    MENU_ITEMS.combos.forEach((item, index) => {
+        const card = createMenuCard(item, true);
+        card.style.animation = `section-fade-in 0.4s ease-out both`;
+        card.style.animationDelay = `${index * 0.06 + 0.55}s`;
+        combosGrid.appendChild(card);
     });
 }
 
@@ -437,6 +497,15 @@ function updateSectionCounts() {
     const drinksCountEl = document.getElementById('drinks-count');
     drinksCountEl.textContent = `${drinksSelected} selected`;
     drinksCountEl.classList.toggle('has-selection', drinksSelected > 0);
+
+    // Combos count
+    let combosSelected = 0;
+    MENU_ITEMS.combos.forEach(item => {
+        if (orderState[item.id] > 0) combosSelected++;
+    });
+    const combosCountEl = document.getElementById('combos-count');
+    combosCountEl.textContent = `${combosSelected} selected`;
+    combosCountEl.classList.toggle('has-selection', combosSelected > 0);
 }
 
 function clearAll() {
@@ -646,7 +715,7 @@ function initParticles() {
 // ============================================
 
 function getAllItems() {
-    return [...MENU_ITEMS.food, ...MENU_ITEMS.drinks];
+    return [...MENU_ITEMS.food, ...MENU_ITEMS.drinks, ...MENU_ITEMS.combos];
 }
 
 function createRipple(event, element) {
@@ -705,6 +774,85 @@ function toggleSound() {
 }
 
 // ============================================
+// Credit Pill Easter Egg
+// ============================================
+
+let creditClickCount = 0;
+let creditClickTimer = null;
+let easterEggCooldown = false;
+
+function triggerHotdogRain() {
+    // Create a rain container
+    let rain = document.querySelector('.hotdog-rain');
+    if (!rain) {
+        rain = document.createElement('div');
+        rain.className = 'hotdog-rain';
+        document.body.appendChild(rain);
+    }
+
+    const emojis = ['🌭', '🌭', '🌭', '🍟', '🧀', '🥤', '🍡', '🌭'];
+    const count = 50;
+
+    for (let i = 0; i < count; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'hotdog-rain-piece';
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+        const left = Math.random() * 100;
+        const size = Math.random() * 1.5 + 1;
+        const duration = Math.random() * 2 + 2;
+        const delay = Math.random() * 1.5;
+
+        piece.textContent = emoji;
+        piece.style.cssText = `
+            left: ${left}%;
+            font-size: ${size}rem;
+            animation-duration: ${duration}s;
+            animation-delay: ${delay}s;
+        `;
+
+        rain.appendChild(piece);
+        setTimeout(() => piece.remove(), (duration + delay) * 1000 + 100);
+    }
+
+    // Clean up container after all pieces are done
+    setTimeout(() => {
+        if (rain.children.length === 0) {
+            rain.remove();
+        }
+    }, 5000);
+}
+
+function activateCreditEasterEgg() {
+    if (easterEggCooldown) return;
+    easterEggCooldown = true;
+
+    const pill = document.getElementById('credit-pill');
+    const textEl = pill.querySelector('.credit-text');
+
+    // Activate rainbow mode
+    pill.classList.add('easter-egg-active');
+    textEl.textContent = 'Glizzy God 👑';
+
+    // Trigger effects
+    playSound('celebration');
+    triggerConfetti();
+    triggerHotdogRain();
+
+    // Second wave
+    setTimeout(() => {
+        triggerConfetti();
+        playSound('celebration');
+    }, 800);
+
+    // Reset after 4 seconds
+    setTimeout(() => {
+        pill.classList.remove('easter-egg-active');
+        textEl.textContent = 'Made by Damon';
+        easterEggCooldown = false;
+    }, 4000);
+}
+
+// ============================================
 // Init
 // ============================================
 
@@ -730,5 +878,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close modal on overlay click
     document.getElementById('receipt-modal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeReceipt();
+    });
+
+    // Credit pill easter egg — triple-click to activate
+    document.getElementById('credit-pill').addEventListener('click', () => {
+        creditClickCount++;
+        clearTimeout(creditClickTimer);
+
+        if (creditClickCount >= 3) {
+            creditClickCount = 0;
+            activateCreditEasterEgg();
+        } else {
+            creditClickTimer = setTimeout(() => {
+                creditClickCount = 0;
+            }, 600);
+        }
     });
 });
