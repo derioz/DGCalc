@@ -590,7 +590,17 @@ body {
     transition: transform var(--transition-spring);
 }
 
-.menu-card:hover .card-emoji {
+.card-image {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    transition: transform var(--transition-spring);
+}
+
+.menu-card:hover .card-emoji,
+.menu-card:hover .card-image {
     transform: scale(1.12) rotate(-5deg);
 }
 
@@ -1027,6 +1037,14 @@ body {
 
 .receipt-item-emoji {
     font-size: 1.3rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.receipt-item-image {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
     flex-shrink: 0;
 }
 

@@ -13,6 +13,7 @@ const MENU_ITEMS = {
             name: 'Frozen Frank',
             price: 750,
             emoji: '🍡',
+            image: 'https://r2.fivemanage.com/image/ohnVi1JgdVII.png',
             description: 'Frozen hot dog on a stick'
         },
         {
@@ -20,6 +21,7 @@ const MENU_ITEMS = {
             name: 'Dessert Disaster',
             price: 600,
             emoji: '🌭',
+            image: 'https://r2.fivemanage.com/image/t5c5n2awrXaU.png',
             description: 'Hot dog with sprinkles'
         },
         {
@@ -27,6 +29,7 @@ const MENU_ITEMS = {
             name: 'Cheesequake',
             price: 500,
             emoji: '🧀',
+            image: 'https://r2.fivemanage.com/image/7JdkP2QP4wbm.png',
             description: 'Cheese-smothered hot dog'
         },
         {
@@ -34,6 +37,7 @@ const MENU_ITEMS = {
             name: 'Corn Dog Soup',
             price: 500,
             emoji: '🍵',
+            image: 'https://r2.fivemanage.com/image/AVvW1ZRZAGtN.png',
             description: 'Corn dog in a cup of soup'
         },
         {
@@ -41,6 +45,7 @@ const MENU_ITEMS = {
             name: 'Ketchup Chips',
             price: 500,
             emoji: '🍟',
+            image: 'https://r2.fivemanage.com/image/yOabDM0KqjYY.png',
             description: 'Crispy ketchup-flavored chips'
         }
     ],
@@ -50,6 +55,7 @@ const MENU_ITEMS = {
             name: 'Frank Shake',
             price: 750,
             emoji: '🥤',
+            image: 'https://r2.fivemanage.com/image/bGceYvNdUYJd.png',
             description: 'Hot dog milkshake'
         },
         {
@@ -57,6 +63,7 @@ const MENU_ITEMS = {
             name: 'Mustard Slush',
             price: 600,
             emoji: '🧃',
+            image: 'https://r2.fivemanage.com/image/hsOnSFlAXpWM.png',
             description: 'Mustard-flavored slush'
         },
         {
@@ -64,6 +71,7 @@ const MENU_ITEMS = {
             name: 'Relish Refresher',
             price: 500,
             emoji: '🍹',
+            image: 'https://r2.fivemanage.com/image/KtgryTk0WJd0.png',
             description: 'Green relish refresher'
         },
         {
@@ -71,6 +79,7 @@ const MENU_ITEMS = {
             name: 'Electro Glizzy Slush',
             price: 500,
             emoji: '🧊',
+            image: 'https://r2.fivemanage.com/image/naab92OUKEuN.png',
             description: 'Blue electric slush with a frank'
         },
         {
@@ -78,6 +87,7 @@ const MENU_ITEMS = {
             name: 'Flamingo Fizzle',
             price: 500,
             emoji: '🍧',
+            image: 'https://r2.fivemanage.com/image/yZ1zmFRwZ5PN.png',
             description: 'Pink fizzy drink'
         }
     ],
@@ -264,6 +274,9 @@ function createMenuCard(item, isCombo = false) {
     card.dataset.itemId = item.id;
 
     const tagHtml = item.tag ? `<div class="combo-tag">${item.tag}</div>` : '';
+    const mediaHtml = item.image 
+        ? `<img src="${item.image}" alt="${item.name}" class="card-image">`
+        : `<div class="card-emoji">${item.emoji}</div>`;
 
     card.innerHTML = `
         <div class="active-badge"></div>
@@ -273,7 +286,7 @@ function createMenuCard(item, isCombo = false) {
                 <div class="card-name">${item.name}</div>
                 <div class="card-price">${formatPrice(item.price)}</div>
             </div>
-            <div class="card-emoji">${item.emoji}</div>
+            ${mediaHtml}
         </div>
         <div class="quantity-controls">
             <button class="qty-btn minus" data-action="decrement" data-item="${item.id}" aria-label="Remove one ${item.name}" title="Remove one">−</button>
@@ -589,18 +602,24 @@ function openReceipt() {
             </div>
         `;
     } else {
-        body.innerHTML = activeItems.map(item => `
-            <div class="receipt-item">
-                <div class="receipt-item-info">
-                    <span class="receipt-item-emoji">${item.emoji}</span>
-                    <div class="receipt-item-details">
-                        <div class="receipt-item-name">${item.name}</div>
-                        <div class="receipt-item-qty">${item.qty} × ${formatPrice(item.price)}</div>
+        body.innerHTML = activeItems.map(item => {
+            const receiptMediaHtml = item.image
+                ? `<img src="${item.image}" alt="${item.name}" class="receipt-item-image">`
+                : `<span class="receipt-item-emoji">${item.emoji}</span>`;
+            
+            return `
+                <div class="receipt-item">
+                    <div class="receipt-item-info">
+                        ${receiptMediaHtml}
+                        <div class="receipt-item-details">
+                            <div class="receipt-item-name">${item.name}</div>
+                            <div class="receipt-item-qty">${item.qty} × ${formatPrice(item.price)}</div>
+                        </div>
                     </div>
+                    <div class="receipt-item-price">${formatPrice(item.price * item.qty)}</div>
                 </div>
-                <div class="receipt-item-price">${formatPrice(item.price * item.qty)}</div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     modal.classList.add('open');
