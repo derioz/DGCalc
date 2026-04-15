@@ -418,9 +418,10 @@ body {
 }
 
 .combo-tag {
-    display: inline-block;
+    position: absolute;
+    top: 14px;
+    left: var(--space-lg);
     padding: 2px 8px;
-    margin-bottom: var(--space-sm);
     font-size: 0.6rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -429,9 +430,12 @@ body {
     background: linear-gradient(135deg, rgba(168, 85, 247, 0.35) 0%, rgba(139, 92, 246, 0.25) 100%);
     border: 1px solid rgba(168, 85, 247, 0.3);
     border-radius: var(--radius-full);
-    position: relative;
     z-index: 2;
     white-space: nowrap;
+}
+
+.combo-card .card-top {
+    margin-top: 26px;
 }
 
 .menu-section:nth-child(4) {
@@ -617,7 +621,8 @@ body {
 }
 
 .menu-card.active .card-tap-hint {
-    opacity: 0;
+    opacity: 0 !important;
+    display: none !important;
 }
 
 /* ---------- Quantity Controls ---------- */
