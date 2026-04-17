@@ -290,7 +290,7 @@ function createMenuCard(item, isCombo = false) {
         </div>
         <div class="quantity-controls">
             <button class="qty-btn minus" data-action="decrement" data-item="${item.id}" aria-label="Remove one ${item.name}" title="Remove one">−</button>
-            <div class="qty-display" id="qty-${item.id}" aria-live="polite">0</div>
+            <input type="number" class="qty-display" id="qty-${item.id}" value="0" min="0" max="999" aria-live="polite">
             <button class="qty-btn plus" data-action="increment" data-item="${item.id}" aria-label="Add one ${item.name}" title="Add one">+</button>
         </div>
         <div class="card-subtotal" id="subtotal-${item.id}">
@@ -315,6 +315,30 @@ function createMenuCard(item, isCombo = false) {
     card.querySelector('.plus').addEventListener('click', (e) => {
         e.stopPropagation();
         updateQuantity(item.id, 1);
+    });
+
+    // Input handler
+    const qtyInput = card.querySelector('.qty-display');
+    qtyInput.addEventListener('change', (e) => {
+        let val = parseInt(e.target.value, 10);
+        if (isNaN(val) || val < 0) val = 0;
+        if (val > 999) val = 999;
+        
+        // update visually first so diff triggers correctly
+        const currentQty = orderState[item.id];
+        const diff = val - currentQty;
+        
+        if (diff !== 0) {
+            updateQuantity(item.id, diff);
+        } else {
+            // Reset visual to matched state if invalid value
+            e.target.value = currentQty;
+        }
+    });
+
+    // Make input select all on focus
+    qtyInput.addEventListener('focus', function() {
+        this.select();
     });
 
     return card;
@@ -378,7 +402,7 @@ function updateQuantity(itemId, delta) {
 
     // Update display
     const qtyDisplay = document.getElementById(`qty-${itemId}`);
-    qtyDisplay.textContent = newQty;
+    qtyDisplay.value = newQty;
     
     if (newQty > 0) {
         qtyDisplay.classList.add('has-value');
@@ -555,7 +579,7 @@ function clearAll() {
         orderState[item.id] = 0;
         
         const qtyDisplay = document.getElementById(`qty-${item.id}`);
-        qtyDisplay.textContent = '0';
+        qtyDisplay.value = '0';
         qtyDisplay.classList.remove('has-value');
         
         const card = document.getElementById(`card-${item.id}`);

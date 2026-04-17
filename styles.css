@@ -752,6 +752,16 @@ body {
     border-radius: var(--radius-sm);
     font-family: var(--font-primary);
     font-variant-numeric: tabular-nums;
+    text-align: center;
+    outline: none;
+    padding: 0;
+    -moz-appearance: textfield;
+}
+
+.qty-display::-webkit-outer-spin-button,
+.qty-display::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .qty-display.has-value {
