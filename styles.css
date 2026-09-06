@@ -917,7 +917,8 @@ body {
 }
 
 .order-breakdown.has-items {
-    max-height: 200px;
+    max-height: 140px;
+    overflow-y: auto;
     margin-top: var(--space-md);
 }
 
@@ -1652,4 +1653,5 @@ button:focus:not(:focus-visible) {
 .order-footer.visible ~ .credit-pill {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
 }
