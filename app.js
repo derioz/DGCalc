@@ -301,7 +301,7 @@ function createMenuCard(item, isCombo = false) {
 
     // Quick-add: tap the card body to add 1
     card.addEventListener('click', (e) => {
-        if (e.target.closest('.qty-btn')) return;
+        if (e.target.closest('.quantity-controls')) return;
         createRipple(e, card);
         updateQuantity(item.id, 1);
     });
@@ -319,20 +319,46 @@ function createMenuCard(item, isCombo = false) {
 
     // Input handler
     const qtyInput = card.querySelector('.qty-display');
-    qtyInput.addEventListener('change', (e) => {
-        let val = parseInt(e.target.value, 10);
-        if (isNaN(val) || val < 0) val = 0;
-        if (val > 999) val = 999;
-        
-        // update visually first so diff triggers correctly
+
+    const handleInputSync = (e) => {
+        const raw = e.target.value;
+        if (raw === '') return; // Allow user to clear input while typing
+
+        let val = parseInt(raw, 10);
+        if (isNaN(val)) return;
+        val = Math.max(0, Math.min(999, val));
+
         const currentQty = orderState[item.id];
         const diff = val - currentQty;
-        
+        if (diff !== 0) {
+            updateQuantity(item.id, diff);
+        }
+    };
+
+    const handleInputBlur = (e) => {
+        const raw = e.target.value;
+        let val = parseInt(raw, 10);
+        if (isNaN(val) || val < 0) {
+            val = 0;
+        } else if (val > 999) {
+            val = 999;
+        }
+
+        const currentQty = orderState[item.id];
+        const diff = val - currentQty;
         if (diff !== 0) {
             updateQuantity(item.id, diff);
         } else {
-            // Reset visual to matched state if invalid value
             e.target.value = currentQty;
+        }
+    };
+
+    qtyInput.addEventListener('input', handleInputSync);
+    qtyInput.addEventListener('change', handleInputBlur);
+    qtyInput.addEventListener('blur', handleInputBlur);
+    qtyInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.target.blur();
         }
     });
 
@@ -446,9 +472,10 @@ function updateQuantity(itemId, delta) {
 
 function showFloatIndicator(itemId, delta) {
     const card = document.getElementById(`card-${itemId}`);
+    if (!card) return;
     const indicator = document.createElement('div');
     indicator.className = `float-indicator ${delta > 0 ? 'add' : 'remove'}`;
-    indicator.textContent = delta > 0 ? '+1' : '-1';
+    indicator.textContent = delta > 0 ? `+${delta}` : `${delta}`;
     indicator.style.right = '16px';
     indicator.style.top = '50%';
     card.appendChild(indicator);
